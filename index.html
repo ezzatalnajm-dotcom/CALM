@@ -54,12 +54,24 @@
   }
 
   /* ---- onboarding ---- */
-  #onboarding .voice-grid{
+  .voice-grid{
     display:grid;
     grid-template-columns:1fr 1fr;
     gap:10px;
     margin:16px 0 8px;
   }
+  .voice-grid.mini{gap:6px;margin:8px 0 4px;}
+  .voice-grid.mini .voice-opt{padding:8px 4px;font-size:12px;}
+  .voice-grid.mini .voice-opt .emoji{font-size:18px;margin-bottom:3px;}
+  textarea.msg-text{
+    width:100%;padding:10px;border-radius:10px;border:1px solid var(--sand-dark);
+    font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;margin-bottom:4px;
+  }
+  .level-block{
+    border:1px solid var(--sand-dark);border-radius:14px;padding:12px;margin-bottom:12px;
+  }
+  .level-block > .level-title{font-size:13px;font-weight:bold;color:var(--deep-teal);margin-bottom:8px;}
+  .hint-note{font-size:12px;color:#8a97a0;margin:2px 0 14px;line-height:1.6;}
   .voice-opt{
     border:2px solid var(--sand-dark);
     background:var(--sand);
@@ -267,15 +279,42 @@
         <input type="range" id="threshold" min="0.02" max="0.35" step="0.01" />
       </div>
       <div class="field">
-        <label>غيّر صوت التنبيه</label>
-        <div class="voice-grid" id="voiceGridSettings">
-          <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
-          <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
-          <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
-          <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+        <label>نص وصوت كل مستوى (لو مفيش ملف صوتي مرفوع)</label>
+        <div class="level-block">
+          <div class="level-title">المستوى ١</div>
+          <textarea class="msg-text" id="text1" rows="2" data-level="1"></textarea>
+          <div class="voice-grid mini" data-level="1">
+            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
+            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
+            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
+            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+          </div>
         </div>
-        <label class="file-btn" for="customAudioInput2">📁 رفع ملف صوتي جديد</label>
+        <div class="level-block">
+          <div class="level-title">المستوى ٢</div>
+          <textarea class="msg-text" id="text2" rows="2" data-level="2"></textarea>
+          <div class="voice-grid mini" data-level="2">
+            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
+            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
+            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
+            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+          </div>
+        </div>
+        <div class="level-block">
+          <div class="level-title">المستوى ٣</div>
+          <textarea class="msg-text" id="text3" rows="2" data-level="3"></textarea>
+          <div class="voice-grid mini" data-level="3">
+            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
+            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
+            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
+            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+          </div>
+        </div>
+        <p class="hint-note">لو رفعت ملف صوتي تحت، هيتقال هو في المستويات التلاتة، والاختيارات دي هتتجاهل.</p>
+        <label class="file-btn" for="customAudioInput2">📁 رفع ملف صوتي (يشتغل للمستويات التلاتة)</label>
         <input type="file" id="customAudioInput2" accept="audio/*" />
+        <div id="customFileName2" style="font-size:12px;color:var(--sage);text-align:center;margin-top:6px;"></div>
+        <button class="secondary" id="useTtsBtn" style="margin-top:8px;">إلغاء الملف الصوتي وارجع لصوت النطق</button>
       </div>
       <button class="secondary" id="resetBtn">إعادة ضبط التطبيق</button>
     </div>
@@ -301,6 +340,13 @@ const MESSAGES = [
   'لو سمحت، الصوت لسه عالي، ممكن نهدّى شوية أكتر؟',
   'برجاء خفض الصوت الآن، مراعاة للي حواليك، وشكرًا لتفهّمك'
 ];
+
+/* Per-level text + voice, independently customizable. Falls back to MESSAGES/selectedVoice. */
+let levelConfig = store.get('haddoa_levels', null);
+if(!levelConfig){
+  levelConfig = MESSAGES.map((t)=>({ text: t, voice: selectedVoice && selectedVoice!=='custom' ? selectedVoice : 'female' }));
+}
+function saveLevelConfig(){ store.set('haddoa_levels', levelConfig); }
 
 const VOICE_PARAMS = {
   male:   { pitch: 0.85, rate: 0.95 },
@@ -346,20 +392,54 @@ function handleFile(input, onDone){
   });
 }
 handleFile(document.getElementById('customAudioInput'), ()=>{ startBtn.disabled = false; });
-handleFile(document.getElementById('customAudioInput2'), ()=>{ store.set('haddoa_custom_audio', customAudioData); store.set('haddoa_voice','custom'); });
+handleFile(document.getElementById('customAudioInput2'), ()=>{
+  store.set('haddoa_custom_audio', customAudioData);
+  store.set('haddoa_voice','custom');
+  document.getElementById('customFileName2').textContent = '✅ اتحمّل، وهيتقال في المستويات التلاتة';
+});
 
 startBtn.addEventListener('click', ()=>{
   store.set('haddoa_voice', selectedVoice);
   store.set('haddoa_custom_audio', customAudioData);
   store.set('haddoa_onboarded', true);
+  if(selectedVoice && selectedVoice !== 'custom'){
+    levelConfig.forEach(cfg => cfg.voice = selectedVoice);
+    saveLevelConfig();
+  }
   showDashboard();
 });
 
-wireVoiceGrid(document.getElementById('voiceGridSettings'), (v)=>{
-  selectedVoice = v;
+/* ---------------- Per-level settings (text + voice per message) ---------------- */
+function renderLevelSettings(){
+  for(let n=1;n<=3;n++){
+    const textEl = document.getElementById('text'+n);
+    textEl.value = levelConfig[n-1].text;
+    textEl.addEventListener('input', ()=>{
+      levelConfig[n-1].text = textEl.value;
+      saveLevelConfig();
+    });
+    const grid = document.querySelector('.voice-grid.mini[data-level="'+n+'"]');
+    grid.querySelectorAll('.voice-opt').forEach(opt=>{
+      if(opt.dataset.voice === levelConfig[n-1].voice) opt.classList.add('selected');
+      opt.addEventListener('click', ()=>{
+        grid.querySelectorAll('.voice-opt').forEach(o=>o.classList.remove('selected'));
+        opt.classList.add('selected');
+        levelConfig[n-1].voice = opt.dataset.voice;
+        saveLevelConfig();
+      });
+    });
+  }
+}
+renderLevelSettings();
+
+const customFileName2 = document.getElementById('customFileName2');
+document.getElementById('useTtsBtn').addEventListener('click', ()=>{
   customAudioData = null;
-  store.set('haddoa_voice', v);
+  selectedVoice = levelConfig[0].voice || 'female';
   store.set('haddoa_custom_audio', null);
+  store.set('haddoa_voice', selectedVoice);
+  customFileName2.textContent = '';
+  customFileName.textContent = '';
 });
 
 function showDashboard(){
@@ -410,7 +490,13 @@ const lv1 = document.getElementById('lv1'), lv2 = document.getElementById('lv2')
 
 async function startListening(){
   try{
-    micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+    micStream = await navigator.mediaDevices.getUserMedia({
+      audio: {
+        echoCancellation: false,
+        noiseSuppression: false,
+        autoGainControl: false
+      }
+    });
   }catch(err){
     alert('محتاجين إذن الوصول للمايك عشان التطبيق يشتغل');
     return;
@@ -495,11 +581,11 @@ function triggerStage(level, now){
   stage = level;
   lastStageTime = now;
   updateStageUI(level);
-  speakMessage(MESSAGES[level-1]);
+  speakLevel(level);
 }
 
 /* ---------------- Voice output ---------------- */
-function speakMessage(text){
+function speakLevel(level){
   if(selectedVoice === 'custom' && customAudioData){
     try{
       const audio = new Audio(customAudioData);
@@ -507,10 +593,13 @@ function speakMessage(text){
       return;
     }catch(e){ /* fall through to TTS */ }
   }
+  const cfg = levelConfig[level-1] || {};
+  const text = (cfg.text && cfg.text.trim()) ? cfg.text.trim() : MESSAGES[level-1];
+  const voiceType = cfg.voice || 'female';
   if('speechSynthesis' in window){
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = 'ar-EG';
-    const params = VOICE_PARAMS[selectedVoice] || VOICE_PARAMS.female;
+    const params = VOICE_PARAMS[voiceType] || VOICE_PARAMS.female;
     utter.pitch = params.pitch;
     utter.rate = params.rate;
     const voices = speechSynthesis.getVoices();
