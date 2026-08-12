@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>الهدوء نعمة</title>
+<meta name="description" content="تطبيق يذكّرك بلطف بخفض صوتك عند الحاجة" />
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#2F4858" />
+<link rel="apple-touch-icon" href="icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+  :root{
+    --deep-teal:#2F4858;
+    --sage:#7FAF8A;
+    --mint:#8FBFA8;
+    --sand:#F2ECE2;
+    --sand-dark:#E4DAC8;
+    --clay:#E38B75;
+    --gold:#D9A441;
+    --ink:#26333B;
+    --card:#FFFFFF;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--sand);
+    color:var(--ink);
+    font-family:"Tahoma","Segoe UI",system-ui,sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:24px 16px 40px;
+  }
+  .wrap{width:100%;max-width:440px;}
+  header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:22px;
+  }
+  header img{width:52px;height:52px;border-radius:14px;}
+  header h1{font-size:22px;margin:0;color:var(--deep-teal);}
+  header p{margin:2px 0 0;font-size:13px;color:#66757c;}
+
+  .card{
+    background:var(--card);
+    border-radius:20px;
+    padding:22px;
+    box-shadow:0 6px 24px rgba(47,72,88,0.08);
+    margin-bottom:16px;
+  }
+
+  /* ---- onboarding ---- */
+  #onboarding .voice-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin:16px 0 8px;
+  }
+  .voice-opt{
+    border:2px solid var(--sand-dark);
+    background:var(--sand);
+    border-radius:14px;
+    padding:14px 10px;
+    text-align:center;
+    cursor:pointer;
+    font-size:14px;
+    transition:all .15s;
+  }
+  .voice-opt.selected{
+    border-color:var(--sage);
+    background:#EEF6EF;
+    color:var(--deep-teal);
+    font-weight:bold;
+  }
+  .voice-opt .emoji{font-size:26px;display:block;margin-bottom:6px;}
+  input[type=file]{display:none;}
+  .file-btn{
+    display:block;
+    width:100%;
+    text-align:center;
+    padding:12px;
+    border-radius:12px;
+    background:var(--sand-dark);
+    color:var(--deep-teal);
+    font-size:14px;
+    cursor:pointer;
+    margin-top:6px;
+  }
+
+  button.primary{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:14px;
+    background:var(--deep-teal);
+    color:#fff;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+  }
+  button.primary:disabled{opacity:.5;cursor:not-allowed;}
+  button.secondary{
+    width:100%;
+    padding:12px;
+    border:2px solid var(--deep-teal);
+    border-radius:14px;
+    background:transparent;
+    color:var(--deep-teal);
+    font-size:15px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:10px;
+  }
+
+  /* ---- main dashboard ---- */
+  #dashboard{display:none;}
+  .meter-shell{
+    position:relative;
+    width:220px;height:220px;
+    margin:8px auto 18px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:conic-gradient(var(--sage) 0deg, var(--sand-dark) 0deg);
+    transition:background .15s linear;
+  }
+  .meter-inner{
+    width:172px;height:172px;
+    border-radius:50%;
+    background:var(--card);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+  }
+  .meter-inner .stage-label{font-size:14px;color:#66757c;margin-top:4px;}
+  .meter-inner .big-icon{font-size:44px;}
+
+  .status-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:10px;
+  }
+  .status-row .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:#c8c8c8;display:inline-block;margin-left:6px;
+  }
+  .status-row .dot.live{background:var(--sage);box-shadow:0 0 0 4px rgba(127,175,138,.25);}
+
+  .levels{display:flex;gap:8px;margin-top:10px;}
+  .levels div{
+    flex:1;text-align:center;font-size:12px;
+    padding:8px 4px;border-radius:10px;background:var(--sand);
+  }
+  .levels div.active-1{background:#EAF6E5;color:var(--sage);font-weight:bold;}
+  .levels div.active-2{background:#FBF1DC;color:var(--gold);font-weight:bold;}
+  .levels div.active-3{background:#FBEAE5;color:var(--clay);font-weight:bold;}
+
+  .action-row{display:flex;gap:10px;margin-top:14px;}
+  .action-row button{flex:1;}
+
+  .icon-btn{
+    display:flex;align-items:center;justify-content:center;gap:8px;
+    padding:12px;border-radius:14px;border:none;cursor:pointer;
+    font-size:14px;font-weight:bold;
+  }
+  .icon-btn.install{background:var(--sage);color:#fff;}
+  .icon-btn.share{background:var(--sand-dark);color:var(--deep-teal);}
+
+  .settings-toggle{
+    text-align:center;font-size:13px;color:#8a97a0;margin-top:16px;cursor:pointer;
+    text-decoration:underline;
+  }
+
+  #settingsPanel{display:none;margin-top:14px;}
+  .field{margin-bottom:14px;}
+  .field label{font-size:13px;color:#66757c;display:block;margin-bottom:6px;}
+  input[type=range]{width:100%;}
+
+  .ios-hint{
+    display:none;
+    background:#FBF1DC;color:#7a5b12;font-size:13px;
+    padding:12px;border-radius:12px;margin-top:10px;line-height:1.7;
+  }
+
+  footer{margin-top:18px;font-size:12px;color:#9aa5ab;text-align:center;}
+
+  @media (prefers-reduced-motion:no-preference){
+    .pulse{animation:pulse 1.4s infinite;}
+  }
+  @keyframes pulse{
+    0%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+    100%{transform:scale(1);}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <img src="icon-192.png" alt="شعار الهدوء نعمة" />
+    <div>
+      <h1>الهدوء نعمة</h1>
+      <p>يذكّرك بلطف بخفض صوتك</p>
+    </div>
+  </header>
+
+  <!-- ===== ONBOARDING ===== -->
+  <div class="card" id="onboarding">
+    <h2 style="margin-top:0;font-size:17px;">قبل ما نبدأ، اختار صوت التنبيه</h2>
+    <p style="font-size:13px;color:#66757c;margin-top:-6px;">هيتقال بيه رسائل التنبيه الثلاث</p>
+    <div class="voice-grid" id="voiceGrid">
+      <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>صوت رجل</div>
+      <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>صوت ست</div>
+      <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>صوت طفل</div>
+      <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>صوت طفلة</div>
+    </div>
+    <label class="file-btn" for="customAudioInput">📁 أو ارفع ملف صوتي خاص بيك</label>
+    <input type="file" id="customAudioInput" accept="audio/*" />
+    <div id="customFileName" style="font-size:12px;color:var(--sage);text-align:center;margin-top:6px;"></div>
+    <button class="primary" id="startBtn" disabled>ابدأ الاستخدام</button>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div class="card" id="dashboard">
+    <div class="status-row">
+      <span>حالة المايكروفون</span>
+      <span><span class="dot" id="micDot"></span><span id="micText">متوقف</span></span>
+    </div>
+
+    <div class="meter-shell" id="meterShell">
+      <div class="meter-inner">
+        <div class="big-icon" id="bigIcon">🎙️</div>
+        <div class="stage-label" id="stageLabel">كل حاجة هادية</div>
+      </div>
+    </div>
+
+    <div class="levels">
+      <div id="lv1">مستوى ١</div>
+      <div id="lv2">مستوى ٢</div>
+      <div id="lv3">مستوى ٣</div>
+    </div>
+
+    <button class="primary" id="toggleMicBtn">تشغيل المراقبة</button>
+
+    <div class="action-row">
+      <button class="icon-btn install" id="installBtn">⬇️ تثبيت التطبيق</button>
+      <button class="icon-btn share" id="shareBtn">📤 مشاركة</button>
+    </div>
+
+    <div class="ios-hint" id="iosHint">
+      على الآيفون: افتح زر <b>المشاركة</b> في سفاري، واختار <b>"إضافة إلى الشاشة الرئيسية"</b> عشان تثبّت التطبيق.
+    </div>
+
+    <div class="settings-toggle" id="settingsToggle">⚙️ الإعدادات</div>
+    <div id="settingsPanel">
+      <div class="field">
+        <label>حساسية التنبيه (كل ما قللت الرقم، كل ما بقى أسهل يتنبّه)</label>
+        <input type="range" id="threshold" min="0.02" max="0.35" step="0.01" />
+      </div>
+      <div class="field">
+        <label>غيّر صوت التنبيه</label>
+        <div class="voice-grid" id="voiceGridSettings">
+          <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
+          <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
+          <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
+          <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+        </div>
+        <label class="file-btn" for="customAudioInput2">📁 رفع ملف صوتي جديد</label>
+        <input type="file" id="customAudioInput2" accept="audio/*" />
+      </div>
+      <button class="secondary" id="resetBtn">إعادة ضبط التطبيق</button>
+    </div>
+  </div>
+
+  <footer>المايك بيشتغل بس والتطبيق مفتوح قدامك، وما بيتسجلش أو يتبعت لحد.</footer>
+</div>
+
+<script>
+/* ---------------- Storage / state ---------------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem(k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+};
+
+let selectedVoice = store.get('haddoa_voice', null);
+let customAudioData = store.get('haddoa_custom_audio', null); // base64
+let threshold = store.get('haddoa_threshold', 0.14);
+
+/* Respectful escalating messages (fixed content, spoken not written) */
+const MESSAGES = [
+  'من فضلك، خفّض صوتك شوية، الهدوء نعمة',
+  'لو سمحت، الصوت لسه عالي، ممكن نهدّى شوية أكتر؟',
+  'برجاء خفض الصوت الآن، مراعاة للي حواليك، وشكرًا لتفهّمك'
+];
+
+const VOICE_PARAMS = {
+  male:   { pitch: 0.85, rate: 0.95 },
+  female: { pitch: 1.15, rate: 1.0 },
+  boy:    { pitch: 1.4,  rate: 1.05 },
+  girl:   { pitch: 1.5,  rate: 1.05 }
+};
+
+/* ---------------- Onboarding ---------------- */
+const onboarding = document.getElementById('onboarding');
+const dashboard = document.getElementById('dashboard');
+const startBtn = document.getElementById('startBtn');
+const customFileName = document.getElementById('customFileName');
+
+function wireVoiceGrid(gridEl, onPick){
+  gridEl.querySelectorAll('.voice-opt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      gridEl.querySelectorAll('.voice-opt').forEach(o=>o.classList.remove('selected'));
+      opt.classList.add('selected');
+      onPick(opt.dataset.voice);
+    });
+  });
+}
+
+wireVoiceGrid(document.getElementById('voiceGrid'), (v)=>{
+  selectedVoice = v;
+  customAudioData = null;
+  startBtn.disabled = false;
+});
+
+function handleFile(input, onDone){
+  input.addEventListener('change', ()=>{
+    const f = input.files[0];
+    if(!f) return;
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      customAudioData = reader.result;
+      selectedVoice = 'custom';
+      customFileName.textContent = '✅ ' + f.name;
+      onDone && onDone();
+    };
+    reader.readAsDataURL(f);
+  });
+}
+handleFile(document.getElementById('customAudioInput'), ()=>{ startBtn.disabled = false; });
+handleFile(document.getElementById('customAudioInput2'), ()=>{ store.set('haddoa_custom_audio', customAudioData); store.set('haddoa_voice','custom'); });
+
+startBtn.addEventListener('click', ()=>{
+  store.set('haddoa_voice', selectedVoice);
+  store.set('haddoa_custom_audio', customAudioData);
+  store.set('haddoa_onboarded', true);
+  showDashboard();
+});
+
+wireVoiceGrid(document.getElementById('voiceGridSettings'), (v)=>{
+  selectedVoice = v;
+  customAudioData = null;
+  store.set('haddoa_voice', v);
+  store.set('haddoa_custom_audio', null);
+});
+
+function showDashboard(){
+  onboarding.style.display = 'none';
+  dashboard.style.display = 'block';
+}
+
+if(store.get('haddoa_onboarded', false)){
+  showDashboard();
+}
+
+/* ---------------- Settings panel ---------------- */
+const settingsToggle = document.getElementById('settingsToggle');
+const settingsPanel = document.getElementById('settingsPanel');
+settingsToggle.addEventListener('click', ()=>{
+  settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
+});
+const thresholdInput = document.getElementById('threshold');
+thresholdInput.value = threshold;
+thresholdInput.addEventListener('input', ()=>{
+  threshold = parseFloat(thresholdInput.value);
+  store.set('haddoa_threshold', threshold);
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  localStorage.clear();
+  location.reload();
+});
+
+/* ---------------- Mic monitoring ---------------- */
+let audioCtx, analyser, micStream, dataArray, rafId;
+let listening = false;
+let stage = 0;               // 0..3
+let loudSince = null;        // timestamp volume first crossed threshold
+let quietSince = null;
+let lastStageTime = 0;
+const STAGE_GAP_MS = 30000;  // 30s between escalations
+const CONFIRM_LOUD_MS = 2500; // must stay loud this long before first alert
+const CONFIRM_QUIET_MS = 4000;
+
+const micDot = document.getElementById('micDot');
+const micText = document.getElementById('micText');
+const toggleMicBtn = document.getElementById('toggleMicBtn');
+const meterShell = document.getElementById('meterShell');
+const stageLabel = document.getElementById('stageLabel');
+const bigIcon = document.getElementById('bigIcon');
+const lv1 = document.getElementById('lv1'), lv2 = document.getElementById('lv2'), lv3 = document.getElementById('lv3');
+
+async function startListening(){
+  try{
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:true });
+  }catch(err){
+    alert('محتاجين إذن الوصول للمايك عشان التطبيق يشتغل');
+    return;
+  }
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaStreamSource(micStream);
+  analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 1024;
+  source.connect(analyser);
+  dataArray = new Uint8Array(analyser.fftSize);
+
+  listening = true;
+  micDot.classList.add('live');
+  micText.textContent = 'شغال';
+  toggleMicBtn.textContent = 'إيقاف المراقبة';
+  loop();
+}
+
+function stopListening(){
+  listening = false;
+  if(rafId) cancelAnimationFrame(rafId);
+  if(micStream) micStream.getTracks().forEach(t=>t.stop());
+  if(audioCtx) audioCtx.close();
+  micDot.classList.remove('live');
+  micText.textContent = 'متوقف';
+  toggleMicBtn.textContent = 'تشغيل المراقبة';
+  resetStage();
+}
+
+function resetStage(){
+  stage = 0; loudSince = null; quietSince = null;
+  updateStageUI(0);
+  meterShell.style.background = 'conic-gradient(var(--sage) 0deg, var(--sand-dark) 0deg)';
+}
+
+function updateStageUI(level){
+  [lv1,lv2,lv3].forEach(el=>el.className='');
+  bigIcon.classList.remove('pulse');
+  if(level===0){ stageLabel.textContent='كل حاجة هادية'; bigIcon.textContent='🎙️'; }
+  if(level===1){ lv1.className='active-1'; stageLabel.textContent='الصوت بدأ يعلى'; bigIcon.textContent='🙂'; bigIcon.classList.add('pulse'); }
+  if(level===2){ lv2.className='active-2'; stageLabel.textContent='الصوت عالي'; bigIcon.textContent='😐'; bigIcon.classList.add('pulse'); }
+  if(level===3){ lv3.className='active-3'; stageLabel.textContent='الصوت عالي جدًا'; bigIcon.textContent='😣'; bigIcon.classList.add('pulse'); }
+}
+
+function loop(){
+  if(!listening) return;
+  analyser.getByteTimeDomainData(dataArray);
+  let sum = 0;
+  for(let i=0;i<dataArray.length;i++){
+    const v = (dataArray[i]-128)/128;
+    sum += v*v;
+  }
+  const rms = Math.sqrt(sum/dataArray.length); // 0..1
+
+  const pct = Math.min(1, rms/ (threshold*2.2));
+  meterShell.style.background = `conic-gradient(var(--sage) ${pct*360}deg, var(--sand-dark) 0deg)`;
+
+  const now = performance.now();
+
+  if(rms >= threshold){
+    quietSince = null;
+    if(loudSince === null) loudSince = now;
+    const sustained = now - loudSince;
+
+    if(stage === 0 && sustained >= CONFIRM_LOUD_MS){
+      triggerStage(1, now);
+    } else if(stage >= 1 && stage < 3 && (now - lastStageTime) >= STAGE_GAP_MS){
+      triggerStage(stage+1, now);
+    }
+  } else {
+    loudSince = null;
+    if(quietSince === null) quietSince = now;
+    if(stage > 0 && (now - quietSince) >= CONFIRM_QUIET_MS){
+      resetStage();
+    }
+  }
+
+  rafId = requestAnimationFrame(loop);
+}
+
+function triggerStage(level, now){
+  stage = level;
+  lastStageTime = now;
+  updateStageUI(level);
+  speakMessage(MESSAGES[level-1]);
+}
+
+/* ---------------- Voice output ---------------- */
+function speakMessage(text){
+  if(selectedVoice === 'custom' && customAudioData){
+    try{
+      const audio = new Audio(customAudioData);
+      audio.play();
+      return;
+    }catch(e){ /* fall through to TTS */ }
+  }
+  if('speechSynthesis' in window){
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = 'ar-EG';
+    const params = VOICE_PARAMS[selectedVoice] || VOICE_PARAMS.female;
+    utter.pitch = params.pitch;
+    utter.rate = params.rate;
+    const voices = speechSynthesis.getVoices();
+    const arVoice = voices.find(v=>v.lang && v.lang.startsWith('ar'));
+    if(arVoice) utter.voice = arVoice;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utter);
+  }
+}
+
+toggleMicBtn.addEventListener('click', ()=>{
+  if(listening) stopListening(); else startListening();
+});
+
+/* ---------------- Install (Android/Chrome) ---------------- */
+let deferredPrompt = null;
+const installBtn = document.getElementById('installBtn');
+const iosHint = document.getElementById('iosHint');
+
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+});
+
+installBtn.addEventListener('click', async ()=>{
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice;
+    deferredPrompt = null;
+  } else if(isIOS){
+    iosHint.style.display = 'block';
+  } else {
+    alert('لو مش شايف نافذة التثبيت، افتح التطبيق من متصفح كروم وجرب من قائمة المتصفح "تثبيت التطبيق"');
+  }
+});
+
+/* ---------------- Share ---------------- */
+document.getElementById('shareBtn').addEventListener('click', async ()=>{
+  const shareData = {
+    title: 'الهدوء نعمة',
+    text: 'تطبيق بسيط بيذكّرك بلطف إنك تخفّض صوتك 🌿',
+    url: location.href
+  };
+  if(navigator.share){
+    try{ await navigator.share(shareData); }catch(e){}
+  } else {
+    try{
+      await navigator.clipboard.writeText(shareData.url);
+      alert('تم نسخ رابط التطبيق');
+    }catch(e){
+      alert(shareData.url);
+    }
+  }
+});
+
+/* ---------------- Service worker ---------------- */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
