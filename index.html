@@ -717,8 +717,23 @@ function speakLevel(level){
   }
 }
 
+function unlockSpeechForIOS(){
+  if('speechSynthesis' in window){
+    try{
+      const primer = new SpeechSynthesisUtterance(' ');
+      primer.volume = 0.01;
+      speechSynthesis.speak(primer);
+    }catch(e){}
+  }
+}
+
 toggleMicBtn.addEventListener('click', ()=>{
-  if(listening) stopListening(); else startListening();
+  if(listening){
+    stopListening();
+  } else {
+    unlockSpeechForIOS(); // لازم يحصل فورًا جوه لمسة المستخدم عشان سفاري يسمح بالنطق التلقائي بعد كده
+    startListening();
+  }
 });
 
 /* ---------------- Install (Android/Chrome) ---------------- */
