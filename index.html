@@ -60,27 +60,32 @@
     gap:10px;
     margin:16px 0 8px;
   }
-  .voice-grid.mini{
-    display:flex;gap:5px;margin:0;flex-shrink:0;
-  }
-  .voice-grid.mini .voice-opt{
-    width:30px;height:30px;padding:0;font-size:15px;border-radius:8px;
-    display:flex;align-items:center;justify-content:center;
-  }
   textarea.msg-text{
     width:100%;padding:10px;border-radius:10px;border:1px solid var(--sand-dark);
-    font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;margin-top:6px;
+    font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;
   }
   select.msg-select{
-    flex:1;min-width:0;padding:9px 8px;border-radius:10px;border:1px solid var(--sand-dark);
+    flex:1 1 40%;min-width:0;padding:9px 8px;border-radius:10px;border:1px solid var(--sand-dark);
     font-family:inherit;font-size:12px;color:var(--ink);background:var(--sand);
   }
+  input.sec-input{
+    width:44px;padding:9px 4px;border-radius:10px;border:1px solid var(--sand-dark);
+    font-family:inherit;font-size:12px;color:var(--ink);text-align:center;background:var(--sand);
+  }
+  select.voice-select{
+    flex:0 0 68px;padding:9px 4px;border-radius:10px;border:1px solid var(--sand-dark);
+    font-family:inherit;font-size:12px;color:var(--ink);background:var(--sand);
+  }
+  button.test-btn{
+    flex:0 0 34px;height:34px;border-radius:10px;border:none;background:var(--sage);
+    color:#fff;font-size:14px;cursor:pointer;
+  }
   .level-block{
-    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    display:flex;align-items:center;gap:5px;flex-wrap:wrap;
     padding:8px 0;margin-bottom:4px;border-bottom:1px solid var(--sand-dark);
   }
-  .level-block > .level-title{font-size:12px;font-weight:bold;color:var(--deep-teal);flex-shrink:0;width:20px;}
-  .level-block .msg-text{width:100%;order:9;}
+  .level-block > .level-title{font-size:12px;font-weight:bold;color:var(--deep-teal);flex-shrink:0;width:14px;}
+  .level-block .msg-text{width:100%;order:9;margin-top:6px;}
   .hint-note{font-size:12px;color:#8a97a0;margin:2px 0 14px;line-height:1.6;}
   .voice-opt{
     border:2px solid var(--sand-dark);
@@ -274,38 +279,44 @@
         <input type="range" id="threshold" min="0.02" max="0.35" step="0.01" />
       </div>
       <div class="field">
-        <label>الجملة وصوت المتحدث لكل مستوى (لو مفيش ملف صوتي مرفوع)</label>
+        <label>الجملة والتوقيت وصوت المتحدث لكل مستوى (لو مفيش ملف صوتي مرفوع)</label>
         <div class="level-block">
           <div class="level-title">١</div>
           <select class="msg-select" id="select1" data-level="1"></select>
-          <div class="voice-grid mini" data-level="1">
-            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
-            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
-            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
-            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
-          </div>
+          <input type="number" class="sec-input" id="sec1" min="1" max="60" step="1" title="التوقيت بالثانية" />
+          <select class="voice-select" id="voice1" title="صوت المتحدث">
+            <option value="male">🧔 رجل</option>
+            <option value="female">👩 ست</option>
+            <option value="boy">👦 طفل</option>
+            <option value="girl">👧 طفلة</option>
+          </select>
+          <button type="button" class="test-btn" id="test1" title="جرّب الجملة">🔊</button>
           <textarea class="msg-text" id="text1" rows="2" data-level="1" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
         <div class="level-block">
           <div class="level-title">٢</div>
           <select class="msg-select" id="select2" data-level="2"></select>
-          <div class="voice-grid mini" data-level="2">
-            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
-            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
-            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
-            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
-          </div>
+          <input type="number" class="sec-input" id="sec2" min="1" max="60" step="1" title="التوقيت بالثانية" />
+          <select class="voice-select" id="voice2" title="صوت المتحدث">
+            <option value="male">🧔 رجل</option>
+            <option value="female">👩 ست</option>
+            <option value="boy">👦 طفل</option>
+            <option value="girl">👧 طفلة</option>
+          </select>
+          <button type="button" class="test-btn" id="test2" title="جرّب الجملة">🔊</button>
           <textarea class="msg-text" id="text2" rows="2" data-level="2" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
         <div class="level-block">
           <div class="level-title">٣</div>
           <select class="msg-select" id="select3" data-level="3"></select>
-          <div class="voice-grid mini" data-level="3">
-            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
-            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
-            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
-            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
-          </div>
+          <input type="number" class="sec-input" id="sec3" min="1" max="60" step="1" title="التوقيت بالثانية" />
+          <select class="voice-select" id="voice3" title="صوت المتحدث">
+            <option value="male">🧔 رجل</option>
+            <option value="female">👩 ست</option>
+            <option value="boy">👦 طفل</option>
+            <option value="girl">👧 طفلة</option>
+          </select>
+          <button type="button" class="test-btn" id="test3" title="جرّب الجملة">🔊</button>
           <textarea class="msg-text" id="text3" rows="2" data-level="3" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
         <p class="hint-note" id="voiceHintNote">لو رفعت ملف صوتي تحت، هيتقال هو في المستويات التلاتة، والاختيارات دي هتتجاهل.</p>
@@ -339,47 +350,49 @@ const MESSAGES = [
   'برجاء خفض الصوت الآن، مراعاة للي حواليك، وشكرًا لتفهّمك'
 ];
 
-/* جمل جاهزة قصيرة (مقطع واحد) لكل مستوى، بأفضل تشكيل ممكن — آخر حرف بيتظبط بالكود دايمًا */
+/* جمل جاهزة قصيرة (مقطع واحد) لكل مستوى — آخر حرف بيتظبط بالكود دايمًا بعلامة سكون */
 const PRESETS = {
   1: [
-    'خَفِّضْ صَوْتَكْ شْوَيَّهْ',
-    'الصَّوْتْ عَالِي شْوَيَّهْ',
-    'هَدِّي شْوَيَّهْ لَوْ سَمَحْتْ',
-    'مِنْ فَضْلَكْ اهْدَأْ'
+    'هُدُوءٌ',
+    'هُدُوءٌ، مِنْ فَضْلِكْ',
+    'أَرْجُو الْهُدُوءْ'
   ],
   2: [
-    'الصَّوْتْ لِسَّهْ عَالِي',
-    'يَا رِيتْ تِهَدَّى أَكْتَرْ',
-    'خَفِّضِ الصَّوْتْ لَوْ سَمَحْتْ',
-    'الْهُدُوءْ مُهِمّْ دِلْوَقْتِيْ'
+    'نَحْتَاجُ لِهُدُوءٍ أَكْثَرْ',
+    'الصَّوْتُ مَا زَالَ عَالِيْ',
+    'مِنْ فَضْلِكُمْ، هُدُوءٌ أَكْثَرْ'
   ],
   3: [
-    'الصَّوْتْ عَالِي جِدًّاْ',
-    'مِنْ فَضْلَكْ اهْدَأْ حَالًاْ',
-    'خَفِّضِ الصَّوْتْ الْآنْ',
-    'الرَّجَاءْ الْهُدُوءْ فَوْرًاْ'
+    'الْإِزْعَاجُ مُتْعِبْ',
+    'الْإِزْعَاجُ مَرْفُوضْ',
+    'الْإِزْعَاجُ مَمْنُوعْ'
   ]
 };
 
-/* يمسح أي حركة على آخر حرف ويحط بدالها سكون، عشان النطق يبقى واضح ومحترم مش سخيف */
+/* يشيل أي علامة ترقيم وحركة في آخر الجملة، ويحط بدالها سكون على آخر حرف فعلي */
 function forceFinalSukun(text){
   if(!text) return text;
   let t = text.trim();
-  // شيل أي علامات تشكيل (حركات/تنوين/شدة) من آخر الجملة
-  t = t.replace(/[\u064B-\u0652]+$/,'');
+  t = t.replace(/[.,!؟،؛:]+$/,'');           // شيل علامات الترقيم من الآخر
+  t = t.replace(/[\u064B-\u0652]+$/,'');       // شيل أي حركة/تنوين/شدة من آخر حرف
+  t = t.trim();
   if(t.length === 0) return text;
   return t + '\u0652'; // سكون
 }
 
 /* Per-level text + voice, independently customizable. Falls back to MESSAGES/selectedVoice. */
 let levelConfig = store.get('haddoa_levels', null);
+const DEFAULT_DELAYS = [2, 5, 9];
 if(!levelConfig || !levelConfig[0].mode){
   levelConfig = [1,2,3].map((n)=>({
     mode: 'preset',
     preset: PRESETS[n][0],
     custom: '',
-    voice: selectedVoice && selectedVoice!=='custom' ? selectedVoice : 'female'
+    voice: selectedVoice && selectedVoice!=='custom' ? selectedVoice : 'female',
+    delaySec: DEFAULT_DELAYS[n-1]
   }));
+} else {
+  levelConfig.forEach((cfg,i)=>{ if(!cfg.delaySec) cfg.delaySec = DEFAULT_DELAYS[i]; });
 }
 function saveLevelConfig(){ store.set('haddoa_levels', levelConfig); }
 
@@ -452,6 +465,9 @@ function renderLevelSettings(){
   for(let n=1;n<=3;n++){
     const selectEl = document.getElementById('select'+n);
     const textEl = document.getElementById('text'+n);
+    const secEl = document.getElementById('sec'+n);
+    const voiceEl = document.getElementById('voice'+n);
+    const testEl = document.getElementById('test'+n);
     const cfg = levelConfig[n-1];
 
     selectEl.innerHTML = '';
@@ -491,16 +507,20 @@ function renderLevelSettings(){
       saveLevelConfig();
     });
 
-    const grid = document.querySelector('.voice-grid.mini[data-level="'+n+'"]');
-    grid.querySelectorAll('.voice-opt').forEach(opt=>{
-      if(opt.dataset.voice === cfg.voice) opt.classList.add('selected');
-      opt.addEventListener('click', ()=>{
-        grid.querySelectorAll('.voice-opt').forEach(o=>o.classList.remove('selected'));
-        opt.classList.add('selected');
-        cfg.voice = opt.dataset.voice;
-        saveLevelConfig();
-      });
+    secEl.value = cfg.delaySec;
+    secEl.addEventListener('input', ()=>{
+      const v = parseInt(secEl.value, 10);
+      cfg.delaySec = (v >= 1 && v <= 60) ? v : cfg.delaySec;
+      saveLevelConfig();
     });
+
+    voiceEl.value = cfg.voice;
+    voiceEl.addEventListener('change', ()=>{
+      cfg.voice = voiceEl.value;
+      saveLevelConfig();
+    });
+
+    testEl.addEventListener('click', ()=>{ speakLevel(n); });
   }
 }
 renderLevelSettings();
@@ -557,7 +577,6 @@ let stage = 0;               // 0..3
 let loudSince = null;        // timestamp volume first crossed threshold
 let quietSince = null;
 let lastStageTime = 0;
-const STAGE_GAPS = [2000, 5000, 9000]; // [إشارة أولى, فاصل قبل الثانية, فاصل قبل الثالثة] بالمللي ثانية
 const CONFIRM_QUIET_MS = 4000;
 
 const micDot = document.getElementById('micDot');
@@ -639,6 +658,7 @@ function loop(){
     if(loudSince === null) loudSince = now;
     const sustained = now - loudSince;
 
+    const STAGE_GAPS = levelConfig.map(cfg => (cfg.delaySec || 2) * 1000);
     if(stage === 0 && sustained >= STAGE_GAPS[0]){
       triggerStage(1, now);
     } else if(stage >= 1 && stage < 3 && (now - lastStageTime) >= STAGE_GAPS[stage]){
