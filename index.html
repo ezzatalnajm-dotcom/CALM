@@ -60,21 +60,27 @@
     gap:10px;
     margin:16px 0 8px;
   }
-  .voice-grid.mini{gap:6px;margin:8px 0 4px;}
-  .voice-grid.mini .voice-opt{padding:8px 4px;font-size:12px;}
-  .voice-grid.mini .voice-opt .emoji{font-size:18px;margin-bottom:3px;}
+  .voice-grid.mini{
+    display:flex;gap:5px;margin:0;flex-shrink:0;
+  }
+  .voice-grid.mini .voice-opt{
+    width:30px;height:30px;padding:0;font-size:15px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+  }
   textarea.msg-text{
     width:100%;padding:10px;border-radius:10px;border:1px solid var(--sand-dark);
-    font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;margin-bottom:4px;
+    font-family:inherit;font-size:13px;color:var(--ink);resize:vertical;margin-top:6px;
   }
   select.msg-select{
-    width:100%;padding:10px;border-radius:10px;border:1px solid var(--sand-dark);
-    font-family:inherit;font-size:13px;color:var(--ink);margin-bottom:6px;background:var(--sand);
+    flex:1;min-width:0;padding:9px 8px;border-radius:10px;border:1px solid var(--sand-dark);
+    font-family:inherit;font-size:12px;color:var(--ink);background:var(--sand);
   }
   .level-block{
-    border:1px solid var(--sand-dark);border-radius:14px;padding:12px;margin-bottom:12px;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+    padding:8px 0;margin-bottom:4px;border-bottom:1px solid var(--sand-dark);
   }
-  .level-block > .level-title{font-size:13px;font-weight:bold;color:var(--deep-teal);margin-bottom:8px;}
+  .level-block > .level-title{font-size:12px;font-weight:bold;color:var(--deep-teal);flex-shrink:0;width:20px;}
+  .level-block .msg-text{width:100%;order:9;}
   .hint-note{font-size:12px;color:#8a97a0;margin:2px 0 14px;line-height:1.6;}
   .voice-opt{
     border:2px solid var(--sand-dark);
@@ -170,15 +176,6 @@
   }
   .status-row .dot.live{background:var(--sage);box-shadow:0 0 0 4px rgba(127,175,138,.25);}
 
-  .levels{display:flex;gap:8px;margin-top:10px;}
-  .levels div{
-    flex:1;text-align:center;font-size:12px;
-    padding:8px 4px;border-radius:10px;background:var(--sand);
-  }
-  .levels div.active-1{background:#EAF6E5;color:var(--sage);font-weight:bold;}
-  .levels div.active-2{background:#FBF1DC;color:var(--gold);font-weight:bold;}
-  .levels div.active-3{background:#FBEAE5;color:var(--clay);font-weight:bold;}
-
   .action-row{display:flex;gap:10px;margin-top:14px;}
   .action-row button{flex:1;}
 
@@ -225,7 +222,7 @@
     <img src="icon-192.png" alt="شعار الهدوء نعمة" />
     <div>
       <h1>الهدوء نعمة</h1>
-      <p>يذكّرك بلطف بخفض صوتك</p>
+      <p>يذكّر بلطف بخفض الصوت</p>
     </div>
   </header>
 
@@ -259,12 +256,6 @@
       </div>
     </div>
 
-    <div class="levels">
-      <div id="lv1">مستوى ١</div>
-      <div id="lv2">مستوى ٢</div>
-      <div id="lv3">مستوى ٣</div>
-    </div>
-
     <button class="primary" id="toggleMicBtn">تشغيل المراقبة</button>
 
     <div class="action-row">
@@ -283,45 +274,45 @@
         <input type="range" id="threshold" min="0.02" max="0.35" step="0.01" />
       </div>
       <div class="field">
-        <label>رسالة وصوت كل مستوى (لو مفيش ملف صوتي مرفوع)</label>
+        <label>الجملة وصوت المتحدث لكل مستوى (لو مفيش ملف صوتي مرفوع)</label>
         <div class="level-block">
-          <div class="level-title">المستوى ١</div>
+          <div class="level-title">١</div>
           <select class="msg-select" id="select1" data-level="1"></select>
-          <textarea class="msg-text" id="text1" rows="2" data-level="1" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
           <div class="voice-grid mini" data-level="1">
-            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
-            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
-            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
-            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
+            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
+            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
+            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
           </div>
+          <textarea class="msg-text" id="text1" rows="2" data-level="1" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
         <div class="level-block">
-          <div class="level-title">المستوى ٢</div>
+          <div class="level-title">٢</div>
           <select class="msg-select" id="select2" data-level="2"></select>
-          <textarea class="msg-text" id="text2" rows="2" data-level="2" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
           <div class="voice-grid mini" data-level="2">
-            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
-            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
-            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
-            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
+            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
+            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
+            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
           </div>
+          <textarea class="msg-text" id="text2" rows="2" data-level="2" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
         <div class="level-block">
-          <div class="level-title">المستوى ٣</div>
+          <div class="level-title">٣</div>
           <select class="msg-select" id="select3" data-level="3"></select>
-          <textarea class="msg-text" id="text3" rows="2" data-level="3" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
           <div class="voice-grid mini" data-level="3">
-            <div class="voice-opt" data-voice="male"><span class="emoji">🧔</span>رجل</div>
-            <div class="voice-opt" data-voice="female"><span class="emoji">👩</span>ست</div>
-            <div class="voice-opt" data-voice="boy"><span class="emoji">👦</span>طفل</div>
-            <div class="voice-opt" data-voice="girl"><span class="emoji">👧</span>طفلة</div>
+            <div class="voice-opt" data-voice="male" title="صوت رجل">🧔</div>
+            <div class="voice-opt" data-voice="female" title="صوت ست">👩</div>
+            <div class="voice-opt" data-voice="boy" title="صوت طفل">👦</div>
+            <div class="voice-opt" data-voice="girl" title="صوت طفلة">👧</div>
           </div>
+          <textarea class="msg-text" id="text3" rows="2" data-level="3" style="display:none;" placeholder="اكتب جملتك هنا (مقطع واحد قصير)"></textarea>
         </div>
-        <p class="hint-note">لو رفعت ملف صوتي تحت، هيتقال هو في المستويات التلاتة، والاختيارات دي هتتجاهل.</p>
+        <p class="hint-note" id="voiceHintNote">لو رفعت ملف صوتي تحت، هيتقال هو في المستويات التلاتة، والاختيارات دي هتتجاهل.</p>
         <label class="file-btn" for="customAudioInput2">📁 رفع ملف صوتي (يشتغل للمستويات التلاتة)</label>
         <input type="file" id="customAudioInput2" accept="audio/*" />
         <div id="customFileName2" style="font-size:12px;color:var(--sage);text-align:center;margin-top:6px;"></div>
-        <button class="secondary" id="useTtsBtn" style="margin-top:8px;">إلغاء الملف الصوتي وارجع لصوت النطق</button>
+        <button class="secondary" id="useTtsBtn" style="margin-top:8px;display:none;">إلغاء الملف الصوتي وارجع لصوت النطق</button>
       </div>
       <button class="secondary" id="resetBtn">إعادة ضبط التطبيق</button>
     </div>
@@ -440,6 +431,7 @@ handleFile(document.getElementById('customAudioInput2'), ()=>{
   store.set('haddoa_custom_audio', customAudioData);
   store.set('haddoa_voice','custom');
   document.getElementById('customFileName2').textContent = '✅ اتحمّل، وهيتقال في المستويات التلاتة';
+  updateAudioModeUI();
 });
 
 startBtn.addEventListener('click', ()=>{
@@ -513,6 +505,13 @@ function renderLevelSettings(){
 }
 renderLevelSettings();
 
+function updateAudioModeUI(){
+  const hasCustom = selectedVoice === 'custom' && !!customAudioData;
+  document.getElementById('voiceHintNote').style.display = hasCustom ? 'none' : 'block';
+  document.getElementById('useTtsBtn').style.display = hasCustom ? 'block' : 'none';
+}
+updateAudioModeUI();
+
 const customFileName2 = document.getElementById('customFileName2');
 document.getElementById('useTtsBtn').addEventListener('click', ()=>{
   customAudioData = null;
@@ -521,6 +520,7 @@ document.getElementById('useTtsBtn').addEventListener('click', ()=>{
   store.set('haddoa_voice', selectedVoice);
   customFileName2.textContent = '';
   customFileName.textContent = '';
+  updateAudioModeUI();
 });
 
 function showDashboard(){
@@ -566,7 +566,6 @@ const toggleMicBtn = document.getElementById('toggleMicBtn');
 const meterShell = document.getElementById('meterShell');
 const stageLabel = document.getElementById('stageLabel');
 const bigIcon = document.getElementById('bigIcon');
-const lv1 = document.getElementById('lv1'), lv2 = document.getElementById('lv2'), lv3 = document.getElementById('lv3');
 
 async function startListening(){
   try{
@@ -613,12 +612,11 @@ function resetStage(){
 }
 
 function updateStageUI(level){
-  [lv1,lv2,lv3].forEach(el=>el.className='');
   bigIcon.classList.remove('pulse');
   if(level===0){ stageLabel.textContent='كل حاجة هادية'; bigIcon.textContent='🎙️'; }
-  if(level===1){ lv1.className='active-1'; stageLabel.textContent='الصوت بدأ يعلى'; bigIcon.textContent='🙂'; bigIcon.classList.add('pulse'); }
-  if(level===2){ lv2.className='active-2'; stageLabel.textContent='الصوت عالي'; bigIcon.textContent='😐'; bigIcon.classList.add('pulse'); }
-  if(level===3){ lv3.className='active-3'; stageLabel.textContent='الصوت عالي جدًا'; bigIcon.textContent='😣'; bigIcon.classList.add('pulse'); }
+  if(level===1){ stageLabel.textContent='الصوت بدأ يعلى'; bigIcon.textContent='🙂'; bigIcon.classList.add('pulse'); }
+  if(level===2){ stageLabel.textContent='الصوت عالي'; bigIcon.textContent='😐'; bigIcon.classList.add('pulse'); }
+  if(level===3){ stageLabel.textContent='الصوت عالي جدًا'; bigIcon.textContent='😣'; bigIcon.classList.add('pulse'); }
 }
 
 function loop(){
