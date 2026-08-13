@@ -325,7 +325,6 @@
         <div id="customFileName2" style="font-size:12px;color:var(--sage);text-align:center;margin-top:6px;"></div>
         <button class="secondary" id="useTtsBtn" style="margin-top:8px;display:none;">إلغاء الملف الصوتي وارجع لصوت النطق</button>
       </div>
-      <button class="secondary" id="resetBtn">إعادة ضبط التطبيق</button>
     </div>
   </div>
 
@@ -392,8 +391,20 @@ if(!levelConfig || !levelConfig[0].mode){
     delaySec: DEFAULT_DELAYS[n-1]
   }));
 } else {
-  levelConfig.forEach((cfg,i)=>{ if(!cfg.delaySec) cfg.delaySec = DEFAULT_DELAYS[i]; });
+  levelConfig.forEach((cfg,i)=>{
+    const n = i+1;
+    if(!cfg.delaySec) cfg.delaySec = DEFAULT_DELAYS[i];
+    // لو الجملة المحفوظة قديمة ومش موجودة في القايمة الجديدة، ارجع لأول جملة عشان التطبيق يفضل شغال دايمًا
+    if(cfg.mode === 'preset' && PRESETS[n].indexOf(cfg.preset) === -1){
+      cfg.preset = PRESETS[n][0];
+    }
+    if(cfg.mode !== 'preset' && cfg.mode !== 'custom'){
+      cfg.mode = 'preset';
+      cfg.preset = PRESETS[n][0];
+    }
+  });
 }
+saveLevelConfig();
 function saveLevelConfig(){ store.set('haddoa_levels', levelConfig); }
 
 const VOICE_PARAMS = {
@@ -563,11 +574,6 @@ thresholdInput.value = threshold;
 thresholdInput.addEventListener('input', ()=>{
   threshold = parseFloat(thresholdInput.value);
   store.set('haddoa_threshold', threshold);
-});
-
-document.getElementById('resetBtn').addEventListener('click', ()=>{
-  localStorage.clear();
-  location.reload();
 });
 
 /* ---------------- Mic monitoring ---------------- */

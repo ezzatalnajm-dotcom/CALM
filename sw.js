@@ -1,4 +1,4 @@
-const CACHE_NAME = 'haddoa-neama-v4';
+const CACHE_NAME = 'haddoa-neama-v5';
 const ASSETS = [
   './',
   './index.html',
