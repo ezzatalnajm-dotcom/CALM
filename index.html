@@ -258,6 +258,7 @@
       <div class="meter-inner">
         <div class="big-icon" id="bigIcon">🎙️</div>
         <div class="stage-label" id="stageLabel">كل حاجة هادية</div>
+        <div id="liveLevel" style="font-size:11px;color:#9aa5ab;margin-top:2px;">المستوى: 0.00</div>
       </div>
     </div>
 
@@ -275,7 +276,10 @@
     <div class="settings-toggle" id="settingsToggle">⚙️ الإعدادات</div>
     <div id="settingsPanel">
       <div class="field">
-        <label>حساسية التنبيه (كل ما قللت الرقم، كل ما بقى أسهل يتنبّه)</label>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <label style="margin-bottom:0;">حساسية التنبيه (كل ما قللت الرقم، كل ما بقى أسهل يتنبّه)</label>
+          <span id="thresholdValue" style="font-size:13px;font-weight:bold;color:var(--deep-teal);background:var(--sand);padding:2px 8px;border-radius:8px;">0.14</span>
+        </div>
         <input type="range" id="threshold" min="0.02" max="0.35" step="0.01" />
       </div>
       <div class="field">
@@ -570,9 +574,12 @@ settingsToggle.addEventListener('click', ()=>{
   settingsPanel.style.display = settingsPanel.style.display === 'block' ? 'none' : 'block';
 });
 const thresholdInput = document.getElementById('threshold');
+const thresholdValue = document.getElementById('thresholdValue');
 thresholdInput.value = threshold;
+thresholdValue.textContent = threshold.toFixed(2);
 thresholdInput.addEventListener('input', ()=>{
   threshold = parseFloat(thresholdInput.value);
+  thresholdValue.textContent = threshold.toFixed(2);
   store.set('haddoa_threshold', threshold);
 });
 
@@ -590,6 +597,7 @@ const micText = document.getElementById('micText');
 const toggleMicBtn = document.getElementById('toggleMicBtn');
 const meterShell = document.getElementById('meterShell');
 const stageLabel = document.getElementById('stageLabel');
+const liveLevel = document.getElementById('liveLevel');
 const bigIcon = document.getElementById('bigIcon');
 
 async function startListening(){
@@ -634,6 +642,7 @@ function resetStage(){
   stage = 0; loudSince = null; quietSince = null;
   updateStageUI(0);
   meterShell.style.background = 'conic-gradient(var(--sage) 0deg, var(--sand-dark) 0deg)';
+  liveLevel.textContent = 'المستوى: 0.00';
 }
 
 function updateStageUI(level){
@@ -656,6 +665,7 @@ function loop(){
 
   const pct = Math.min(1, rms/ (threshold*2.2));
   meterShell.style.background = `conic-gradient(var(--sage) ${pct*360}deg, var(--sand-dark) 0deg)`;
+  liveLevel.textContent = 'المستوى: ' + rms.toFixed(2);
 
   const now = performance.now();
 
